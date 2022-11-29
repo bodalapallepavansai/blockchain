@@ -1,0 +1,1549 @@
+captalize
+
+
+
+
+%{
+
+/*  Program to capitalize the given comments */
+
+#include<stdio.h>
+#include<ctype.h>
+
+int f;
+void display(char *s);
+%}
+ch [a-z]
+com [//]
+%%
+{com} {
+    f = 1;
+}
+{ch} {
+    if(f == 1) {
+        display(yytext);
+    }
+}
+%%
+int main() {
+   yylex();
+}
+
+void display(char *s) {
+    for(int i=0; s[i]!='\0'; i++) {
+        printf("%c", toupper(s[i]));
+    }
+    //f = 0;
+}
+
+int yywrap() {
+    return 1;
+}
+
+
+
+
+
+
+hexadecimal   octal
+
+
+
+
+
+
+%{
+ /* Program to identify octal and hexa decimal number */
+
+%}
+
+Oct [0][0-7]+
+Hex [0][x][X][0-9A-F]+
+
+%%
+
+{Oct} printf("Octal number");
+{Hex} printf("Hexadecimal Number");
+
+%%
+
+int main(){
+    yylex();
+}
+
+int yywrap(){
+    return 1;
+}
+
+
+
+
+
+
+real precision   float
+
+
+
+
+
+
+
+%{
+	/*Program to find real precision using lex*/
+	/*([0-9]+\.[0-9]+)|([+|-]?[0-9]+\.[0-9]*[e|E][+|-][0-9]*)*/
+
+%}
+integer ([0-9]+)
+float ([0-9]+\.[0-9]+)|([+|-]?[0-9]+\.[0-9]*[e|E][+|-][0-9]*)
+%%
+{integer} {printf("%s This is Integer\n",yytext);}
+{float} {printf("%s This is Float \n",yytext);}
+%%
+
+int main()
+{
+
+    yylex();
+
+}
+
+int yywrap(){
+ return 1;
+}
+
+
+
+
+
+
+
+scanner lex
+
+
+
+
+%{
+ /* Program to lexeme analyzer */
+
+%}
+
+Keyword "auto"|"double"|"if"|"static"|"break"|"else"|"int"|"struct"|"case"|"enum"|"long"|"switch"|"char"|"extern"|"near"|"typedef"|"const"|"float"|"register"|"union"|"unsigned"|"void"|"while"|"default"
+Constant [0-9]+
+Identifier [_a-zA-Z][_a-zA-Z0-9]+
+
+Operator [/^(\+|-|\*|\/|=|>|<|>=|<=|&|\||%|!|\^|\(|\))$/]
+
+Symbol [$&+,:;=?@#|<>.^*()%!-]
+String [\'][a-zA-Z0-9]+[\']
+
+%%
+{Keyword} printf("\n %s Keyword \n",yytext);
+{Constant}  printf("\n %s Constant",yytext);
+{Identifier} printf("\n %s Identifier",yytext);
+{Operator} printf("\n %s Operator",yytext);
+
+{Symbol} printf("\n %s Symbol",yytext);
+{String} printf("\n %s String",yytext);
+
+%%
+
+int main(){
+    extern FILE *yyin;
+    yyin = fopen("Input.txt","r");
+    printf("\n");
+    yylex();
+}
+int yywrap(){
+    return 1;
+}
+
+
+
+
+
+
+
+
+scanner python
+
+
+
+
+
+
+
+
+
+
+
+import re
+fd = open("tokens.py",'r') #File Descriptor
+count_keywords = 0
+
+keywords = ['print','False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield']
+
+line_count = 1
+
+
+operator_count = 0
+
+print('Line No. \t Lexeme  \t Token  ')
+for line in fd:
+    for i in re.findall('[_a-zA-Z][_a-zA-Z0-9]{0,30}',line):
+        if i in keywords:
+            print(str(line_count)+'\t'+str(i),'\t keyword')
+        else:
+            print(str(line_count)+'\t'+str(i),'\t identifier')
+    for i in re.findall('[/^(\+|-|\*|\/|=|>|<|>=|<=|&|\||%|!|\^|\(|\))$/]',line):
+        print(str(line_count)+'\t'+str(i),'\t Operator')
+    for i in re.findall('[$&+,:;=?@#|<>.^*()%!-]',line):
+        print(str(line_count)+'\t'+str(i),'\t Special Symbols')
+    for i in re.findall('[\'][a-zA-Z0-9]+[\']',line):
+        print(str(line_count)+'\t'+str(i),'\t String')
+
+
+
+    line_count += 1
+
+
+
+
+
+
+
+
+
+
+words,sentences
+
+
+
+
+
+
+
+
+
+
+
+
+import re
+
+
+
+fd = open("ii.txt",'r') #File Descriptor
+count_words = 0
+count_sentences = 0
+count_spaces = 0
+count_symbols = 0
+
+for line in fd:
+    pattern = line
+    count_word = len(re.findall ('\s[a-zA-Z]+\s', pattern))
+    count_sentence = len(re.findall('\.',pattern))
+    count_space = len(re.findall('[\s]+',pattern))
+    count_symbol = len(re.findall('[^0-9a-zA-Z\s]',pattern))
+    count_words += count_word
+    count_sentences += count_sentence
+    count_spaces += count_space
+    count_symbols += count_symbol
+
+print('words = ',count_words)
+print('sentences = ',count_sentences)
+print('spaces = ',count_spaces)
+print('symbols = ',count_symbols)
+
+
+
+
+
+
+
+
+
+
+
+
+
+vowel
+
+
+
+
+
+
+
+%{
+    #include<stdio.h>
+    #include<string.h>
+
+%}
+
+vowel [aAeEiIoOuU]
+consonant [^aAeEiIoOuU\n]
+
+%%
+
+{vowel}  {
+    for(int i=0;i<yyleng;i++){
+        printf("\n %c \t Vowel",yytext[i]);
+    }
+
+}
+
+{consonant} {
+    for(int i=0;i<yyleng;i++){
+        printf("\n %c  \t consonant",yytext[i]);
+    }
+}
+
+%%
+int main(){
+    yylex();
+    return 0;
+
+}
+
+int yywrap(){
+    return 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+ll1 parser
+
+
+
+
+
+
+
+
+
+
+
+
+
+import numpy as np
+from prettytable import PrettyTable
+
+def first(seq,gra,nonterm):
+    first_=set()
+    for i in seq:
+        flag=0
+        if i in nonterm:
+            for j in gra[i]:
+                first_= first_ | first(j,gra,nonterm)
+                if '@' in first(j,gra,nonterm):
+                    flag=1
+            if flag==0:
+                break
+        else:
+            first_=first_|{i}
+            break
+    return first_
+
+
+def follow(var_nt,gra,nonterm):
+    follow_=set()
+    start_var=(list(gra.keys())[0])
+    if var_nt==start_var:
+        follow_=follow_|{'$'}
+    for left_v in gra:
+        for prod in gra[left_v]:
+            if prod!='@':
+                for i in range(len(prod)):
+                    if prod[i]==var_nt:
+                        if i!=(len(prod)-1):
+                            next_str=prod[(i+1):]
+                            first_str=first(next_str,gra,nonterm)
+                            if '@' in first_str:
+                                follow_= follow_ | (first_str-{'@'})
+                                if(left_v!=var_nt):
+                                    follow_=follow_  | follow(left_v,gra,nonterm)
+                            else:
+                                follow_= follow_ | first_str
+                        else:
+                            if(left_v!=var_nt):
+                                follow_=follow_  | follow(left_v,gra,nonterm)
+    return follow_
+
+def ll1_parser(gra,nonterm,term):
+    mat=np.array([["0"]*(len(term)+2)]*(len(nonterm)+1))
+    mat=mat.astype('<U100')
+    term.append('$')
+    for i in range((len(nonterm)+1)):
+        for j in range((len(term)+1)):
+            if i==0 and j>=1:
+                mat[i,j]=term[j-1]
+            elif i>=1 and j==0:
+                mat[i,j]=nonterm[i-1]
+
+    isll1=True
+
+    for left_v in gra:
+        row_n=nonterm.index(left_v)+1
+        for prod in gra[left_v]:
+            first_rule=first(prod,gra,nonterm)
+            if '@' in first_rule:
+                first_rule=first_rule-{'@'}
+                first_rule=first_rule | follow_set[left_v]
+            for i in first_rule:
+                col_n=term.index(i)+1
+                if mat[row_n,col_n]=='0':
+                    mat[row_n,col_n]=left_v+'->'+prod
+                else:
+                    mat[row_n,col_n]=mat[row_n,col_n]+'\n'+left_v+'->'+prod
+                    isll1=False
+    x=PrettyTable()
+    x.field_names=mat[0]
+    for i in range(len(mat)):
+        if i>0:
+            x.add_row(mat[i])
+    print(x)
+    if isll1:
+        print("This grammar can be used for LL1 Parser")
+    else:
+        print("This grammar cannot be used for LL1 Parser")
+
+def read_gra(fname):
+    f=open(fname,"r")
+    raw_gra=f.read()
+    lines=raw_gra.split('\n')
+    gra=dict({})
+    for i in lines:
+        words=i.split()
+        prod=words[2].split('/')
+        gra[words[0]]=prod
+    return gra
+
+
+follow_set=dict({})
+first_set=dict({})
+
+nonterm=[]
+term=[]
+
+n_nonterm=int(input("Enter number of non terminals: "))
+print("Enter the non terminals:")
+for i in range(n_nonterm):
+    c=input()
+    nonterm.append(c)
+
+n_term=int(input("Enter number of terminals: "))
+print("Enter the terminals:")
+for i in range(n_term):
+    c=input()
+    term.append(c)
+
+gra=read_gra("grammar.txt")
+
+for i in gra:
+    first_set[i]=first(i,gra,nonterm)
+
+for i in gra:
+    follow_set[i]=follow(i,gra,nonterm)
+
+print("First of Variables of Grammar: ",end='')
+print(first_set)
+print("Follow of Variables of Grammar: ",end='')
+print(follow_set)
+ll1_parser(gra,nonterm,term)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+grammar.txt
+
+
+
+
+
+
+
+
+
+E -> TB
+B -> +TB/@
+T -> FY
+Y -> *FY/@
+F -> (E)/i
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+recursive descent parser
+
+
+
+print("Recursive Desent Parsing For following grammar\n")
+print("E->TE'\nE'->+TE'/@\nT->FT'\nT'->*FT'/@\nF->(E)/i\n")
+print("Enter the string want to be checked\n")
+global s
+s=list(input())
+global i
+i=0
+def match(a):
+    global s
+    global i
+    if(i>=len(s)):
+        return False
+    elif(s[i]==a):
+        i+=1
+        return True
+    else:
+        return False
+def F():
+    if(match("(")):
+        if(E()):
+            if(match(")")):
+                return True
+            else:
+                return False
+        else:
+            return False
+    elif(match("i")):
+        return True
+    else:
+        return False
+def Tx():
+    if(match("*")):
+        if(F()):
+            if(Tx()):
+                return True
+            else:
+                return False
+        else:
+            return False
+    else:
+        return True
+def T():
+    if(F()):
+        if(Tx()):
+            return True
+        else:
+            return False
+    else:
+        return False
+def Ex():
+    if(match("+")):
+        if(T()):
+            if(Ex()):
+                return True
+            else:
+                return False
+        else:
+            return False
+    else:
+        return True
+def E():
+    if(T()):
+        if(Ex()):
+            return True
+        else:
+            return False
+    else:
+        return False
+if(E()):
+    if(i==len(s)):
+        print("String is accepted")
+    else:
+         print("String is not accepted")
+
+else:
+    print("string is not accepted")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+shift reduce
+
+
+
+
+
+
+
+
+
+# example 1
+gram = {
+	"E":["2E2","3E3","4"]
+}
+starting_terminal = "E"
+inp = "2324232$"
+"""
+# example 2
+gram = {
+	"S":["S+S","S*S","i"]
+}
+starting_terminal = "S"
+inp = "i+i*i"
+"""
+stack = "$"
+print(f'{"Stack": <15}'+"|"+f'{"Input Buffer": <15}'+"|"+f'Parsing Action')
+print(f'{"-":-<50}')
+
+while True:
+	action = True
+	i = 0
+	while i<len(gram[starting_terminal]):
+		if gram[starting_terminal][i] in stack:
+			stack = stack.replace(gram[starting_terminal][i],starting_terminal)
+			print(f'{stack: <15}'+"|"+f'{inp: <15}'+"|"+f'Reduce S->{gram[starting_terminal][i]}')
+			i=-1
+			action = False
+		i+=1
+	if len(inp)>1:
+		stack+=inp[0]
+		inp=inp[1:]
+		print(f'{stack: <15}'+"|"+f'{inp: <15}'+"|"+f'Shift')
+		action = False
+
+	if inp == "$" and stack == ("$"+starting_terminal):
+		print(f'{stack: <15}'+"|"+f'{inp: <15}'+"|"+f'Accepted')
+		break
+
+	if action:
+		print(f'{stack: <15}'+"|"+f'{inp: <15}'+"|"+f'Rejected')
+		break
+
+
+
+
+
+
+
+
+lr0
+
+
+
+
+
+
+
+gram = {
+	"S":["CC"],
+	"C":["aC","d"]
+}
+start = "S"
+terms = ["a","d","$"]
+
+non_terms = []
+for i in gram:
+	non_terms.append(i)
+gram["S'"]= [start]
+
+
+new_row = {}
+for i in terms+non_terms:
+	new_row[i]=""
+
+
+non_terms += ["S'"]
+# each row in state table will be dictionary {nonterms ,term,$}
+stateTable = []
+# I = [(terminal, closure)]
+# I = [("S","A.A")]
+
+def Closure(term, I):
+	if term in non_terms:
+		for i in gram[term]:
+			I+=[(term,"."+i)]
+	I = list(set(I))
+	for i in I:
+		# print("." != i[1][-1],i[1][i[1].index(".")+1])
+		if "." != i[1][-1] and i[1][i[1].index(".")+1] in non_terms and i[1][i[1].index(".")+1] != term:
+			I += Closure(i[1][i[1].index(".")+1], [])
+	return I
+
+Is = []
+Is+=set(Closure("S'", []))
+
+
+countI = 0
+omegaList = [set(Is)]
+while countI<len(omegaList):
+	newrow = dict(new_row)
+	vars_in_I = []
+	Is = omegaList[countI]
+	countI+=1
+	for i in Is:
+		if i[1][-1]!=".":
+			indx = i[1].index(".")
+			vars_in_I+=[i[1][indx+1]]
+	vars_in_I = list(set(vars_in_I))
+	# print(vars_in_I)
+	for i in vars_in_I:
+		In = []
+		for j in Is:
+			if "."+i in j[1]:
+				rep = j[1].replace("."+i,i+".")
+				In+=[(j[0],rep)]
+		if (In[0][1][-1]!="."):
+			temp = set(Closure(i,In))
+			if temp not in omegaList:
+				omegaList.append(temp)
+			if i in non_terms:
+				newrow[i] = str(omegaList.index(temp))
+			else:
+				newrow[i] = "s"+str(omegaList.index(temp))
+			print(f'Goto(I{countI-1},{i}):{temp} That is I{omegaList.index(temp)}')
+		else:
+			temp = set(In)
+			if temp not in omegaList:
+				omegaList.append(temp)
+			if i in non_terms:
+				newrow[i] = str(omegaList.index(temp))
+			else:
+				newrow[i] = "s"+str(omegaList.index(temp))
+			print(f'Goto(I{countI-1},{i}):{temp} That is I{omegaList.index(temp)}')
+
+	stateTable.append(newrow)
+print("\n\nList of I's\n")
+for i in omegaList:
+	print(f'I{omegaList.index(i)}: {i}')
+
+
+#populate replace elements in state Table
+I0 = []
+for i in list(omegaList[0]):
+	I0 += [i[1].replace(".","")]
+print(I0)
+
+for i in omegaList:
+	for j in i:
+		if "." in j[1][-1]:
+			if j[1][-2]=="S":
+				stateTable[omegaList.index(i)]["$"] = "Accept"
+				break
+			for k in terms:
+				stateTable[omegaList.index(i)][k] = "r"+str(I0.index(j[1].replace(".","")))
+print("\nStateTable")
+
+print(f'{" ": <9}',end="")
+for i in new_row:
+	print(f'|{i: <11}',end="")
+
+print(f'\n{"-":-<66}')
+for i in stateTable:
+	print(f'{"I("+str(stateTable.index(i))+")": <9}',end="")
+	for j in i:
+		print(f'|{i[j]: <10}',end=" ")
+	print()
+
+
+
+
+
+
+
+
+
+slr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# 1 ----------------- To Find Closure ----------------
+
+def closure(I,nonT):
+    J = I
+
+    for item in J :
+        #print(item)
+        index = item[1].index('.')
+        if(index<(len(item[1])-1) and item[1][index+1] in nonT):
+            #print('item : ',item[1][index+1])
+            for production in nonT[item[1][index+1]]:
+                if( [item[1][index+1],str('.')+str(production)] not in J):
+                    J.append([item[1][index+1],str('.')+str(production)])
+                    #print([item[1][index+1],str('.')+str(production)])
+    return J
+
+
+# ------------------- Ends --------------------------------
+
+
+
+# 2. --------------- Set of Canonical Items ---------------------
+
+state = []
+I = []
+def setOfItems(start,nonTer,ter):
+    I.append(closure([['start','.'+start+'$']],nonTer))
+    #print(I)
+    ter += list(nonTer.keys())
+    #print("list of inputs : " , ter)
+    for conI in I:
+        for grammar in ter:
+            if(grammar is '$'):
+                continue
+            #print("grammar : ",grammar)
+            goto = False
+            goto1 = False
+            shift = False
+            shift1 = False
+            reduce = False
+            close = []
+            for item in conI:
+                #print("item  : ",item)
+                if(item[1].index('.')<(len(item[1])-1) and item[1][item[1].index('.')+1] is grammar):
+                    close.append([item[0],item[1][:item[1].index('.')]+grammar+'.'+item[1][item[1].index('.')+2:]])
+                #else:
+                #    print(item)
+            #print("close : ",close)
+            l = closure(close,nonTer)
+            if(len(l) == 0):
+                continue
+            #print("closure : ", l)
+            if(grammar in nonTer.keys()):
+                goto1 = True
+            else:
+                shift1 = True
+            if(l not in I):
+                if(goto1):
+                    state.append(['g',I.index(conI)+1,len(I)+1,grammar])
+                    goto = True
+                elif(shift1):
+                    shift = True
+                    state.append(['s',I.index(conI)+1,len(I)+1,grammar])
+                I.append(l)
+
+            else:
+               if(goto1):
+                    goto = True
+                    state.append(['g',I.index(conI)+1,I.index(l)+1,grammar])
+               elif(shift1):
+                   shift = True
+                   state.append(['s',I.index(conI)+1,I.index(l)+1,grammar])
+
+
+
+# -----------------------------------------------------------------
+
+
+
+# 3. -----------------Create a Parse Table ------------------------
+
+reduce = []
+accept = -1
+def toReduce(rule,accept,start):
+    s = ['start',start+'.$']
+    for parState in I:
+        #print(s,parState)
+        if(s in parState):
+            #print("here;")
+            accept = I.index(parState)
+        for item in parState:
+            if( item in rule):
+                reduce[I.index(parState)].append(rule.index(item))
+
+    return accept
+
+
+
+# ------------------------------------------------------------------
+
+
+
+# 4. --------------------- To Parse --------------------------------
+symbolMap = dict()
+parseTable = []
+
+def createParseTable(ter,Follow,rule):
+    for i in state:
+        parseTable[i[1]-1][symbolMap[i[3]]] = i[0]+str(i[2]-1)
+
+    parseTable[accept][symbolMap['$']] = 'a'
+
+    for i in reduce:
+        if(len(i)>0):
+            for j in Follow[rule[int(i[0])][0]]:
+                parseTable[reduce.index(i)][symbolMap[j]] = 'r'+str(i[0])
+
+# (i) Stack -------------------------
+class Stack:
+    def __init__(self):
+        self.__storage = []
+
+    def isEmpty(self):
+        return len(self.__storage) == 0
+
+    def push(self,p):
+        self.__storage.append(p)
+
+    def pop(self):
+        return self.__storage.pop()
+    def top(self):
+        return self.__storage[len(self.__storage) - 1]
+    def length(self):
+        return len(self.__storage)
+    def __str__(self):
+        """
+        Because of using list as parent class for stack, our last element will
+        be first for stack, according to FIFO principle. So, if we will use
+        parent's implementation of str(), we will get reversed order of
+        elements.
+        """
+        #: You can reverse elements and use supper `__str__` method, or
+        #: implement it's behavior by yourself.
+        #: I choose to add 'stack' in the begging in order to differ list and
+        #: stack instances.
+        return 'stack [{}]'.format(', '.join([ str(i) for i in reversed(self.__storage) ]))
+
+#--------------------Stack Defn ENDS ------------------------------------------
+def parseString(rule,string):
+    index = 0
+    flag = False
+    st = Stack()
+    st.push('0')
+    while(index < len(string)):
+        print(st , string , index , sep = '\t\t ')
+        c = parseTable[int(st.top())][symbolMap[string[index]]][0]
+        if(c is 'a'):
+            flag = True
+            break
+        pt = parseTable[int(st.top())][symbolMap[string[index]]][1:]
+        #print("point : ",pt)
+        pt = int(pt)
+        if( c is 'r'):
+            l = len(rule[pt][1])
+            l *= 2
+            l -= 2 #'.' is also considered
+            if(l >= st.length()):
+                break
+            else:
+                for i in range(l):
+                    st.pop()
+                top = int(st.top())
+                st.push(rule[pt][0])
+                st.push(parseTable[top][symbolMap[st.top()]][1:])
+        else:
+            st.push(string[index])
+            st.push(str(pt))
+            index+=1
+    return flag
+
+# ------------------------------------------------------------------
+
+
+
+# -----------------------First and Follow --------------------------
+
+First = dict()
+Follow = dict()
+
+ # (i) ------ First ---------
+def first4pro(str):
+    fir = []
+    flag = False
+    for i in str:
+        if('@' not in First[i]):
+            fir += First[i]
+            flag = True
+            break
+        else:
+            fir+=First[i]
+            fir.remove('@')
+    if(not flag):
+        fir+=['@']
+
+    return fir
+
+def first(nT,nonT,checked):
+    if(checked[nT]):
+        return
+    else:
+        for i in nonT[nT]:
+            #print("production" ,i)
+            last = True
+            for j in i:
+                if(j is nT):
+                    continue
+                if(checked[j]):
+                    if('@' not in First[j]):
+                        First[nT] += First[j]
+                        last = False
+                        break
+                    else:
+                        First[nT] += First[j]
+                        First[nT].remove('@')
+                else:
+                    first(j,nonT,checked)
+                    if('@' not in First[j]):
+                        First[nT] += First[j]
+                        last = False
+                        break
+                    else:
+                        First[nT] += First[j]
+                        First[nT].remove('@')
+            if(last):
+                First[nT].append('@')
+        checked[nT] = True
+
+
+
+
+def createFirst(ter , nonT ):
+    checked = dict()
+    # --- initialising the checked
+    for i in ter:
+        checked[i] = True
+        First[i] = [i]
+    for i in list(nonT.keys()):
+        checked[i] = False
+        First[i] = []
+
+    #---- first --------
+    for i in list(nonT.keys()):
+        if(not checked[i]):
+            first(i,nonT,checked)
+            First[i] = list(set(First[i]))
+
+    #(ii) ------- Follow------------
+
+def follow(nT,nonT,checked):
+    if(checked[nT]):
+        return
+    else:
+        for i in nonT.keys():
+            pro = list(nonT[i])
+            for j in pro:
+               # print(i," -- > ",pro , " to check ",nT , " from : ", j)
+                if(nT in j):
+                    ind = j.index(nT) + 1
+                    while(ind<len(j)):
+                        if('@' not in First[j[ind]]):
+                            Follow[nT] += First[j[ind]]
+                            break
+                        else:
+                            Follow[nT] += First[j[ind]]
+                        ind+=1
+                    if(ind == len(j)):
+                        if(i == nT):
+                            continue
+                        follow(i,nonT,checked)
+                        Follow[nT] += Follow[i]
+        checked[nT] = True
+
+
+
+def createFollow(ter , nonT ,S):
+    checked = dict()
+    # --- Initialising the checked ---
+    for i in list(nonT.keys()):
+        checked[i] = False
+        Follow[i] = []
+    Follow[S] = ['$']
+
+    #calling the follow
+
+    for i in list(nonT.keys()):
+        if(not checked[i]):
+            follow(i,nonT,checked)
+            if(len(Follow[i]) == 0):
+                checked[i] = False
+    for i in list(nonT.keys()):
+        Follow[i] = list(set(Follow[i]))
+        if('@' in Follow[i]):
+            Follow[i].remove('@')
+
+    '''for i in list(nonT.keys()):
+        if( not checked[i]):
+            follow(i,nonT,checked)
+            Follow[i] = list(set(Follow[i]))
+            if(len(Follow[i]) == 0):
+                checked[i] = False
+       '''
+
+
+
+#------------------------ First and Follow ends --------------------
+
+
+# ---------------------------- Driver Program -------------------------
+
+
+terminals = []
+nonTerminals = dict()
+terminals = input("Enter Terminals (|) : ").split("|")
+n = int(input("No. of Non - Terminals  : "))
+
+for i in range(n):
+    ch = input("NonTerminals : ").strip()
+    rules = input("Productions (|) : ").split("|")
+    nonTerminals[ch] = rules
+
+# --- Old Rules-------
+
+S = input("Start Symbol :  ")
+terminals+=['$']
+print("Productions : ")
+for i in nonTerminals.keys():
+    print(i,"-->",end=' ')
+    for j in nonTerminals[i]:
+        print(j,end= ' | ')
+    print()
+
+setOfItems(S,nonTerminals,terminals)
+print("canonicals Items : ")
+for count , i in enumerate(I):
+    print(count+1 , i)
+
+print("state Transitions : ")
+for count , i in enumerate(state):
+    print(count+1, i)
+
+rule = []
+accept = -1
+
+for i in nonTerminals.keys():
+    for j in nonTerminals[i]:
+        rule.append([i,j+str('.')])
+
+print('rule :')
+for i in rule:
+    print(i)
+
+# -------  To find the reduction rules - -- - -- ---
+reduce = [ [] for i in range(len(I)) ]
+accept = toReduce(rule,accept,S)
+
+print("reduce")
+for count,i in enumerate(reduce):
+    print(count+1,i)
+
+print("accept : ",accept+1)
+
+# ---  - - - parse Table - -- -- - -- -- - -- - - -- -
+symbols = []
+symbols += terminals
+
+for count , i in enumerate(symbols):
+    symbolMap[i] = count
+print(symbols)
+
+parseTable = [ ['-' for i in range(len(symbols))] for j in range(len(I)) ]
+
+for i in nonTerminals.keys():
+    terminals.remove(i)
+
+#-------------- First and Follow ----------
+createFirst(terminals,nonTerminals)
+
+
+createFollow(terminals,nonTerminals,S)
+
+print("{}\t\t\t\t{}\t\t\t\t{}".format('Grammar Rule','First','Follow'))
+for i in nonTerminals.keys():
+    print("{}\t\t\t\t{}\t\t\t\t{}".format(i,First[i],Follow[i]))
+
+#----------------------Done--------------------------------
+createParseTable(terminals,Follow,rule)
+
+# ---Parse Table-----
+print('Parse Table')
+print(" \t\t",end='')
+for i in symbols:
+    print(i,end= '\t')
+print()
+for count,j in enumerate(parseTable):
+    print(count,end='\t\t')
+    for i in j:
+        print(i,end='\t')
+    print()
+
+string = input("String : ")
+string+='$'
+
+if(parseString(rule,string)):
+    print("accepted")
+else:
+    print("Not accepted")
+
+
+#------------------------------------------------------------------------
+
+
+
+
+
+
+
+3 address
+
+
+
+
+
+
+from prettytable import PrettyTable
+
+def while_loop(cleaned_code):
+    final_code = []
+    while_idx = None
+    for i in range(len(cleaned_code)):
+        codeline = cleaned_code[i]
+
+        if 'while' in codeline:
+            while_idx = i
+            # The loop condition would be enclosed in brackets
+            start_idx = codeline.index('(')
+            end_idx = codeline.index(')')
+            # Select the substring between start_idx and end_idx
+            bool_condn = ''.join(codeline[start_idx:end_idx+1])
+            final_code.append('if !{} goto({})'.format(bool_condn,None))
+            while_idx = i
+        elif '}' in codeline:
+            final_code.append('goto({})'.format(while_idx+1))
+            final_code[while_idx] = final_code[while_idx].replace('None',str(i+2))
+            while_idx = None
+        else:
+            final_code.append(codeline)
+    return final_code
+
+
+with open('code.txt') as f:
+    code = f.readlines()
+
+print('The Statement is:')
+print(''.join(code))
+
+cleaned_code = []
+for i in range(len(code)):
+    if code[i] != '\n':
+        if code[i][-1] == '\n':
+            # don't include the \n at the end of each line
+            cleaned_code.append(code[i][:-1].strip())
+        else:
+            cleaned_code.append(code[i].strip())
+
+final_code = while_loop(cleaned_code)
+
+final_code.append('END')
+
+print('\nThe Three Code Generated is:')
+x1 = PrettyTable()
+x1.field_names = ['Index','Code']
+for i in range(len(final_code)):
+	x1.add_row([i+1,final_code[i]])
+
+print(x1)
+
+
+
+
+
+
+code generation
+
+
+
+
+
+
+
+OPERATORS = set(['+', '-', '*', '/', '(', ')'])
+PRI = {'+':1, '-':1, '*':2, '/':2}
+
+### INFIX ===> POSTFIX ###
+def infix_to_postfix(formula):
+    stack = [] # only pop when the coming op has priority
+    output = ''
+    for ch in formula:
+        if ch not in OPERATORS:
+            output += ch
+        elif ch == '(':
+            stack.append('(')
+        elif ch == ')':
+            while stack and stack[-1] != '(':
+                output += stack.pop()
+            stack.pop() # pop '('
+        else:
+            while stack and stack[-1] != '(' and PRI[ch] <= PRI[stack[-1]]:
+                output += stack.pop()
+            stack.append(ch)
+    # leftover
+    while stack:
+    	output += stack.pop()
+    print(f'POSTFIX: {output}')
+    return output
+
+### INFIX ===> PREFIX ###
+def infix_to_prefix(formula):
+    op_stack = []
+    exp_stack = []
+    for ch in formula:
+        if not ch in OPERATORS:
+            exp_stack.append(ch)
+        elif ch == '(':
+            op_stack.append(ch)
+        elif ch == ')':
+            while op_stack[-1] != '(':
+                op = op_stack.pop()
+                a = exp_stack.pop()
+                b = exp_stack.pop()
+                exp_stack.append( op+b+a )
+            op_stack.pop() # pop '('
+        else:
+            while op_stack and op_stack[-1] != '(' and PRI[ch] <= PRI[op_stack[-1]]:
+                op = op_stack.pop()
+                a = exp_stack.pop()
+                b = exp_stack.pop()
+                exp_stack.append( op+b+a )
+            op_stack.append(ch)
+
+    # leftover
+    while op_stack:
+        op = op_stack.pop()
+        a = exp_stack.pop()
+        b = exp_stack.pop()
+        exp_stack.append( op+b+a )
+    print(f'PREFIX: {exp_stack[-1]}')
+    return exp_stack[-1]
+
+### THREE ADDRESS CODE GENERATION ###
+def generate3AC(pos):
+	print("### THREE ADDRESS CODE GENERATION ###")
+	exp_stack = []
+	t = 1
+
+	for i in pos:
+		if i not in OPERATORS:
+			exp_stack.append(i)
+		else:
+			print(f't{t} := {exp_stack[-2]} {i} {exp_stack[-1]}')
+			exp_stack=exp_stack[:-2]
+			exp_stack.append(f't{t}')
+			t+=1
+
+expres = input("INPUT THE EXPRESSION: ")
+pre = infix_to_prefix(expres)
+pos = infix_to_postfix(expres)
+generate3AC(pos)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+code optimization
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import pandas as pd
+print("One thing is noticed before starting of the program is that it is compulsory to exist an 'input.csv' file\n")
+print("The formate of 'input.csv' file is that it should contains a 'left' header and a 'right' header with values indicate left and right respectively.\n")
+print("Here we can't consider 'equal(=)' sign because it doesn't effect a bit of code with or without its presence.\n")
+print("This program is case sensitive this means that 'd*10' and '10*d' is treated in different way\n They are not same. ")
+print("The formate and input file for this program is as below..")
+a=pd.read_csv("input.csv")
+c=a.shape
+print(a)
+b=[]
+for i in range(c[0]):
+    for j in range(i+1,c[0]):
+        if(a['right'][i]==a['right'][j]):
+            for d in range(c[0]):
+                b=b+[(len(a['right'][d]))]
+                for z in range(b[d]):
+                    if(a['right'][d][z]==a['left'][j]):
+                        x=list(a['right'][d])
+                        x[z]=a['left'][i]
+                        l=''.join(x)
+                        a['right'][d]=a['right'][d].replace(a['left'][j],a['left'][i])
+            a['left'][j]=a['left'][i]
+df=pd.DataFrame(a)
+df.to_csv('output1.csv',index=False)
+p=pd.read_csv("output1.csv")
+print("After checking and putting the value of common exepression ")
+print(p)
+i=0
+j=i+1
+while(j<c[0]):
+    if(p['right'][i]==p['right'][j]):
+        if(p['left'][i]==p['left'][j]):
+            p.drop([j],axis=0,inplace=True)
+            i+=2
+            j+=1
+        else:
+            i+=1
+    j+=1
+    if(j==c[0]):
+        i=i+1
+        j=i+1
+    if(i==c[0]):
+        j=c[0]
+print("After elemenating the common expression")
+df=pd.DataFrame(p)
+df.to_csv('output1.csv',index=False)
+p=pd.read_csv("output1.csv")
+print(p)
+c=p.shape
+#print(c)
+count=0
+i=0
+j=0
+h=1
+while(j<c[0] and i<c[0]):
+    b=[]
+    b=b+[(len(p['right'][j]))]
+    for z in range(b[0]):
+        #print(z,j,i)
+        if(p['right'][j][z]==p['left'][i]):
+            count=1
+    j+=1
+    #print(j)
+    #print(c[0])
+    if(j==c[0]):
+        #print(count)
+        if(count!=1):
+            p.drop([i],axis=0,inplace=True)
+            df=pd.DataFrame(p)
+            df.to_csv('output1.csv',index=False)
+            p=pd.read_csv("output1.csv")
+            3#print(p)
+            c=p.shape
+            print(c)
+        i+=1
+        j=0
+print("After dead code elimination")
+print(p)
+df=pd.DataFrame(p)
+df.to_csv('output1.csv',index=False)
+p=pd.read_csv("output1.csv")
+c=p.shape
+print("The final optimized code is....")
+for i in range(c[0]):
+    print(str(p['left'][i])+"="+str(p['right'][i]))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+left,right
+a,9
+b,c+d
+e,c+d
+f,b+e
+r,f
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
